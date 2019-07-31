@@ -15,27 +15,20 @@ class App extends Component {
   };
 
   addToDo = title => {
-    const {currentUserId} = this.props;
     const newTodo = {
       complete: false,
       title,
-      owner: currentUserId, 
     };
 
-    ToDos.insert(newTodo);
+    Meteor.call('todos.addToDo', newTodo);
   };
 
-  removeToDo = item => {
-    ToDos.remove({_id: item._id});
+  removeToDo = todo => {
+    Meteor.call('todos.removeToDo', todo);
   };
 
   removeCompleted = () => {
-    const {todos} = this.props;
-    todos.forEach(todo => {
-      if (todo.complete) {
-        ToDos.remove({_id: todo._id});
-      }
-    });
+    Meteor.call('todos.removeCompleted');
   };
 
   render() {
