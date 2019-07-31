@@ -5,6 +5,7 @@ import ToDoInput from "../../components/ToDoInput";
 import ToDoItem from "../../components/ToDoItem";
 import ToDoCount from "../../components/ToDoCount";
 import ClearButton from "../../components/ClearButton";
+import AccountsUIWrapper from "../../components/AccountsWrapper";
 import "./styles.css";
 
 import { ToDos } from "../../../api/todos";
@@ -15,11 +16,11 @@ class App extends Component {
   }
 
   toggleComplete = item => {
-		ToDos.update(
-			{ _id: item._id},
+    ToDos.update(
+      { _id: item._id},
       { $set: { complete: !item.complete }}
-   ); 
-	};
+    ); 
+  };
 
   addToDo = title => {
     const newTodo = {
@@ -46,13 +47,20 @@ class App extends Component {
   render() {
     const {todos} = this.props;
     return (
-      <ToDoForm 
-        todos={todos}
-        addToDo={title => this.addToDo(title)}
-        toggleComplete={item => this.toggleComplete(item)}
-        removeToDo={item => this.removeToDo(item)}
-        removeCompleted={() => this.removeCompleted()}
-      />
+      <div className="app-wrapper">
+        <div className="login-wrapper">
+          <AccountsUIWrapper/>
+        </div>
+        <div>
+          <ToDoForm 
+            todos={todos}
+            addToDo={title => this.addToDo(title)}
+            toggleComplete={item => this.toggleComplete(item)}
+            removeToDo={item => this.removeToDo(item)}
+            removeCompleted={() => this.removeCompleted()}
+          />
+        </div>
+      </div>
     );
   }
 }
@@ -115,29 +123,29 @@ class ToDoForm extends Component {
         <ul>
           {
             todos.map((todo, index) => (
-            <ToDoItem
-              key={index}
-              item={todo}
-              toggleComplete={() => toggleComplete(todo)}
-              removeToDo={() => removeToDo(todo)}
-            />
-          ))}
-        </ul>
-        <div className="todo-admin">
-          <ToDoCount number={number} />
-          {this.hasCompleted() && (
-            <ClearButton removeCompleted={removeCompleted} />
-          )}
+              <ToDoItem
+                key={index}
+                item={todo}
+                toggleComplete={() => toggleComplete(todo)}
+                removeToDo={() => removeToDo(todo)}
+              />
+            ))}
+          </ul>
+          <div className="todo-admin">
+            <ToDoCount number={number} />
+            {this.hasCompleted() && (
+              <ClearButton removeCompleted={removeCompleted} />
+            )}
+          </div>
         </div>
-      </div>
     );
   }
 }
 
 export default withTracker(() => {
-	return {
-		todos: ToDos.find({}).fetch()
-	};
+  return {
+    todos: ToDos.find({}).fetch()
+  };
 })(App);
 
 

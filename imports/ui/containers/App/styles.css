@@ -1,6 +1,12 @@
+.app-wrapper {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+}
+
 /* To-Do List */
 /*-----------------------------------------*/
-
 .todo-list {
    align-self: center;
    background-color: white;
