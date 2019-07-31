@@ -19,7 +19,7 @@ const ToDoItem = ({ item, toggleComplete, removeToDo }) => (
 
 ToDoItem.propTypes = {
   item: PropTypes.shape({
-    _id: PropTypes.number.isRequired,
+    _id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     complete: PropTypes.bool.isRequired
   }),
