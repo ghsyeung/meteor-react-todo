@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Meteor } from "meteor/meteor";
 import {withTracker} from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
 import ToDoInput from "../../components/ToDoInput";
@@ -11,9 +12,6 @@ import "./styles.css";
 import { ToDos } from "../../../api/todos";
 
 class App extends Component {
-  constructor() {
-    super();
-  }
 
   toggleComplete = item => {
     ToDos.update(
@@ -45,7 +43,8 @@ class App extends Component {
   };
 
   render() {
-    const {todos} = this.props;
+    const {todos, currentUser} = this.props;
+    const isLoggedIn = currentUser;
     return (
       <div className="app-wrapper">
         <div className="login-wrapper">
@@ -53,6 +52,7 @@ class App extends Component {
         </div>
         <div>
           <ToDoForm 
+            isLoggedIn={isLoggedIn}
             todos={todos}
             addToDo={title => this.addToDo(title)}
             toggleComplete={item => this.toggleComplete(item)}
@@ -104,40 +104,50 @@ class ToDoForm extends Component {
   }
 
   componentDidMount() {
-    this.toDoInput.current.focus();
+    if (this.toDoInput.current) {
+      this.toDoInput.current.focus();
+    }
   }
 
   render() {
-    const {todos, toggleComplete, addToDo, removeCompleted, removeToDo} = this.props;
+    const {isLoggedIn, todos, toggleComplete, addToDo, removeCompleted, removeToDo} = this.props;
     let number = todos.length;
 
     return (
       <div className="todo-list">
         <h1>So Much To Do</h1>
-        <ToDoInput
-          ref={this.toDoInput}
-          addToDo={this.addToDo}
-          onChange={this.handleInputChange}
-          value={this.state.inputValue}
-        />
-        <ul>
-          {
-            todos.map((todo, index) => (
-              <ToDoItem
-                key={index}
-                item={todo}
-                toggleComplete={() => toggleComplete(todo)}
-                removeToDo={() => removeToDo(todo)}
-              />
-            ))}
-          </ul>
-          <div className="todo-admin">
-            <ToDoCount number={number} />
-            {this.hasCompleted() && (
-              <ClearButton removeCompleted={removeCompleted} />
-            )}
+        { isLoggedIn ? (
+          <div>
+            <ToDoInput
+              ref={this.toDoInput}
+              addToDo={this.addToDo}
+              onChange={this.handleInputChange}
+              value={this.state.inputValue}
+            />
+            <ul>
+              {
+                todos.map((todo, index) => (
+                  <ToDoItem
+                    key={index}
+                    item={todo}
+                    toggleComplete={() => toggleComplete(todo)}
+                    removeToDo={() => removeToDo(todo)}
+                  />
+                ))}
+              </ul>
+              <div className="todo-admin">
+                <ToDoCount number={number} />
+                {this.hasCompleted() && (
+                  <ClearButton removeCompleted={removeCompleted} />
+                )}
+              </div>
+            </div>
+        ) : (
+          <div className="logged-out-message">
+            <p>Please sign in to see your todos.</p>
           </div>
-        </div>
+        ) }
+      </div>
     );
   }
 }
