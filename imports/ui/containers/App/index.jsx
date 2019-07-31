@@ -34,7 +34,6 @@ class App extends Component {
   render() {
     const {todos, currentUser, currentUserId} = this.props;
     const isLoggedIn = currentUser;
-    const filteredTodos = todos.filter(todo => todo.owner === currentUserId);
 
     return (
       <div className="app-wrapper">
@@ -44,7 +43,7 @@ class App extends Component {
         <div>
           <ToDoForm 
             isLoggedIn={isLoggedIn}
-            todos={filteredTodos}
+            todos={todos}
             addToDo={title => this.addToDo(title)}
             toggleComplete={item => this.toggleComplete(item)}
             removeToDo={item => this.removeToDo(item)}
@@ -57,6 +56,10 @@ class App extends Component {
 }
 
 export default withTracker(() => {
+  // IMPORTANT: this "channel" only contains todos
+  //            owned by me
+  Meteor.subscribe('myTodos');
+
   return {
     currentUser: Meteor.user(), 
     currentUserId: Meteor.userId(), 

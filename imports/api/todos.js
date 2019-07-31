@@ -2,6 +2,15 @@ import { Mongo } from "meteor/mongo";
 
 export const ToDos = new Mongo.Collection("todos");
 
+if (Meteor.isServer) {
+  // IMPORTANT: declare a "channel" that contains todos owned by this user
+  Meteor.publish('myTodos', function todosPublication() {
+    // IMPORTANT: Rather than publishing ALL todos in the collection
+    //            we only send back the ones owned by this user
+    return ToDos.find({ owner: this.userId });
+  });
+}
+
 Meteor.methods({
   'todos.toggleComplete'(todo) {
     if (todo.owner !== this.userId) {
