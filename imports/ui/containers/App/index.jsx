@@ -21,9 +21,11 @@ class App extends Component {
   };
 
   addToDo = title => {
+    const {currentUserId} = this.props;
     const newTodo = {
       complete: false,
       title,
+      owner: currentUserId, 
     };
 
     ToDos.insert(newTodo);
@@ -43,8 +45,10 @@ class App extends Component {
   };
 
   render() {
-    const {todos, currentUser} = this.props;
+    const {todos, currentUser, currentUserId} = this.props;
     const isLoggedIn = currentUser;
+    const filteredTodos = todos.filter(todo => todo.owner === currentUserId);
+
     return (
       <div className="app-wrapper">
         <div className="login-wrapper">
@@ -53,7 +57,7 @@ class App extends Component {
         <div>
           <ToDoForm 
             isLoggedIn={isLoggedIn}
-            todos={todos}
+            todos={filteredTodos}
             addToDo={title => this.addToDo(title)}
             toggleComplete={item => this.toggleComplete(item)}
             removeToDo={item => this.removeToDo(item)}
